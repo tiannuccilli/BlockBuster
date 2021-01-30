@@ -27,5 +27,17 @@ namespace BlockBusterTest
             var result = BlockBusterBasicFunctions.GetAllCheckedOutMovies();
             Assert.True(result.Count == 3);
         }
+        [Fact]
+        public void getAllGenreMoviesTest()
+        {
+            var result = BlockBusterBasicFunctions.GetAllGenreMovies("Action");
+            Assert.True(result.Count == 4);
+        }
+        [Fact]
+        public void getAllDirectorMoviesTest()
+        {
+            var result = BlockBusterBasicFunctions.GetAllDirectorMovies("Spielberg");
+            Assert.True(result.Count == 5);
+        }
     }
 }
