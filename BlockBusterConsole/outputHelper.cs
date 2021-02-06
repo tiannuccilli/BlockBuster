@@ -12,7 +12,6 @@ namespace BlockBusterConsole
     {
         public void writeToConsole(List<Movie> movies)
         {
-            Console.WriteLine("List of Movies");
             foreach (var m in movies)
             {
                 Console.WriteLine($"MovieID: {m.MovieId}    Title: {m.Title}    Release Year:{m.ReleaseYear}");
@@ -21,8 +20,6 @@ namespace BlockBusterConsole
         }
         public void writeToConsole1(Movie movie)
         {
-            Console.WriteLine("Movie");
-
                 Console.WriteLine($"MovieID: {movie.MovieId}    Title: {movie.Title}    Release Year:{movie.ReleaseYear}");
         }
 

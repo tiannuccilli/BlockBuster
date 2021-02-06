@@ -9,77 +9,110 @@ namespace BlockBusterConsole
 {
     class Program
     {
-        static void Main(string[] args)
+        private static String ohType;
+        private static String findBy;
+        private static Movie movie = new Movie();
+        private static List<Movie> movies = new List<Movie>();
+
+
+        static void Main()
         {
-            //var conOhType = args[0].ToLower();
-            var ohType = "";
-            var askType = true;
-            while (askType == true)
+            string[] args = Environment.GetCommandLineArgs();
+            AreArguementsValid(args);
+
+            var oh = new outputHelper();
+
+            if (ohType == "console")
             {
-                Console.WriteLine("How would you like to recieve movies?(console/csv)");
-                var ohTypetemp = Console.ReadLine();
-                ohType = ohTypetemp.ToLower();
-                if (ohType == "console" || ohType == "csv")
+                if (findBy != "id")
                 {
-                    askType = false;
-                }
-                Console.Clear();
-            }
-            
-            var findBy = "";
-            var movie = new Movie();
-            List<Movie> movies = new List<Movie>();
-            var ask = true;
-            while (ask == true)
-            {
-                Console.WriteLine("How would you like to search movies?(all, id, genre, director)");
-                var findByTemp = Console.ReadLine();
-                findBy = findByTemp.ToLower();
-                if (findBy == "all")
-                {
-                    movies = BlockBusterBasicFunctions.GetAllMovies();
-                    ask = false;
-                }
-                else if (findBy == "id")
-                {
-                    movie = BlockBusterBasicFunctions.GetMovieById(5);
-                    ask = false;
-                }
-                else if (findBy == "genre")
-                {
-                    movies = BlockBusterBasicFunctions.GetAllGenreMovies("action");
-                    ask = false;
-                }
-                else if (findBy == "director")
-                {
-                    movies = BlockBusterBasicFunctions.GetAllDirectorMovies("Spielberg");
-                    ask = false;
+                    oh.writeToConsole(movies);
                 }
                 else
                 {
-                    Console.WriteLine("Not a proper search case (all, id, genre, director)");
-                }
-            }
-
-            var oh = new outputHelper();
-            if(findBy == "id")
-            {
-                if (ohType == "console")
-                {
                     oh.writeToConsole1(movie);
                 }
-                else if (ohType == "csv")
+            }
+            else if (ohType == "csv")
+            {
+                Console.WriteLine("Writting to csv file");
+                if (findBy != "id")
+                {
+                    oh.writeToCSV(movies);
+                }
+                else
                 {
                     oh.writeToCSV1(movie);
                 }
             }
-            else if (ohType == "console")
+        }
+
+       
+        public static void AreArguementsValid(string[] args)
+        {
+
+            ohType = args[1].ToLower();
+            findBy = args[2].ToLower();
+            if (ohType == "csv" || ohType == "console")
             {
-                oh.writeToConsole(movies);
+                if (findBy == "all" && args.Length == 3)
+                {
+                    Console.WriteLine("Valid");
+                    movies = BlockBusterBasicFunctions.GetAllMovies();
+                }
+                else if (findBy == "id" && args.Length == 4)
+                {
+                    int id;
+                    if (int.TryParse(args[3], out id))
+                    {
+                        movie = BlockBusterBasicFunctions.GetMovieById(id);
+                        if (movie is null)
+                        {
+                            Console.WriteLine($"No movie with id {id}");
+                        }
+      
+                    }
+                    else
+                    {
+                        Console.WriteLine("Proper ID not provided");
+                    }
+                }
+                else if (findBy == "genre" && args.Length == 4)
+                {
+
+                    String[] genres = { "action", "thriller", "horror", "drama", "adventure", "sci-fi", "comedy" };
+                    if (genres.Contains(args[3].ToLower()))
+                    {
+                        var genre = args[3].ToLower();
+                        Console.WriteLine("Valid");
+                        movies = BlockBusterBasicFunctions.GetAllGenreMovies(genre);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Genre must be: action, thriller, horror, drama, adventure, sci - fi, comedy");
+                    }
+                }
+                else if (findBy == "director" && args.Length == 4)
+                {
+                    var director = args[3];
+                    movies = BlockBusterBasicFunctions.GetAllDirectorMovies(director);
+                    if (movies.Count < 1)
+                    {
+                        Console.WriteLine($"No movie by director {director}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Search by: all, id, genre, or director");
+                }
+
             }
-            else if (ohType == "csv"){
-                oh.writeToCSV(movies);
+
+            else
+            {
+                Console.WriteLine("Select console or csv and search type to receive movies");
             }
+
         }
     }
 }
